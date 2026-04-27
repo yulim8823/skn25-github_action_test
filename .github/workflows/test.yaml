@@ -6,6 +6,9 @@ jobs:
   deploy-nginx:
     runs-on: self-hosted
     steps:
+      - name : Checkout Reposity
+        uses : actions/checkout@v4
+
       - name: Stop and Remove Existing Container
         run: |
           docker stop nginx-container || true
