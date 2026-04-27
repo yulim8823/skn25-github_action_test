@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      dockerfile: ./react_backend/Dockerfile
+    container_name: skn25_backend
+    restart: always
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py migrate &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8001 --workers 2"
+    volumes:
+      - static_volume:/app/staticfiles
+      - db_volume:/app/db.sqlite3
+    expose:
+      - "8001"
+  nginx:
+    build:
+      dockerfile: ./Dockerfile
+    container_name: skn25_front
+    restart: always
+    ports:
+      - "88:80"
+    depends_on:
+      - backend
+
+volumes:
+  static_volume:
+  db_volume:
+
