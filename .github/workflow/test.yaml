@@ -1,0 +1,25 @@
+name: Persistent Nginx Deployment
+
+on: push
+
+jobs:
+  deploy-nginx:
+    runs-on: self-hosted
+    steps:
+      - name: Stop and Remove Existing Container
+        run: |
+          docker stop nginx-container || true
+          docker rm nginx-container || true
+
+      - name: Run Nginx in Background
+        run: |
+          docker run -d \
+            --name nginx-container \
+            -p 8080:80 \
+            ubuntu:24.04 \
+            bash -c "apt-get update && apt-get install -y nginx && nginx -g 'daemon off;'"
+
+      - name: Verify Running Container
+        run: |
+          docker ps -f name=nginx-container
+
